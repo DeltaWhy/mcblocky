@@ -1,0 +1,52 @@
+#!/usr/bin/env ruby
+require "thor"
+require "yaml"
+require "mcblocky"
+
+module McBlocky
+  class Cli < Thor
+    include Logging
+
+    class_option :config,
+      desc: 'Path to config file',
+      default: 'config.yml',
+      type: :string,
+      aliases: '-f'
+
+    desc "start", "Start the server"
+    def start
+      $conf = YAML.safe_load(open(options[:config]))
+      $server = Server.new $conf['server_jar'], $conf['server_directory']
+      log_status "Starting server..."
+      $server.start
+      $server.wait_for_line /Done \(.*?\)!/
+      log_status "Server is ready! Connect to 127.0.0.1:25565"
+      reader = Thread.new do
+        until $stdin.closed?
+          line = $stdin.gets
+          $server.command line.chomp
+        end
+      end
+      $server.command("say hello world")
+      $server.on_line /!hello$/ do |line|
+        puts line
+        $server.command("say hello")
+      end
+      $server.on_line /\<DeltaWhy\> !stop$/ do
+        log_status "Stopping server..."
+        $server.stop
+      end
+      $server.loop
+    rescue Interrupt
+      log_status "Stopping server..."
+      $server.stop if $server
+    rescue Exception
+      log_error "Caught error, stopping server..."
+      $server.stop if $server
+      log_error "Error trace:"
+      raise
+    end
+  end
+end
+
+McBlocky::Cli.start(ARGV)
