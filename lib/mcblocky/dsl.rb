@@ -1,7 +1,7 @@
 module McBlocky
   module DSL
-    def helper(*args, **kwargs, &block)
-      context.helpers << [args, kwargs, block]
+    def helper(*command, &block)
+      context.helpers << [command, block]
     end
   end
 end

@@ -1,5 +1,3 @@
-require_relative 'bar'
-
-helper 'foo' do
-  server.say "foo"
+helper 'foo', 'bar' do |args, user, command|
+  server.say "#{command}, #{user}, #{args}"
 end

@@ -22,13 +22,14 @@ module McBlocky
     def start
       @listener.start
       begin
+        log_status "Loading"
         result = @runner.run
       rescue Exception
         log_error "Error in loaded file:"
         puts $!
         return
       end
-      p result
+      @handler.call(result)
       @files = [@main] + result.required_files.to_a if result.required_files
     end
 
@@ -36,16 +37,18 @@ module McBlocky
       @files.each do |f|
         f = File.expand_path(f, @dir).gsub('\\','/')
         if modified.include? f or added.include? f or removed.include? f
-          @handler.call
           begin
+            log_status "Reloading..."
             result = @runner.run
-          rescue Exception
+          rescue Exception => e
             log_error "Error in loaded file:"
-            puts $!
+            puts e.backtrace.join("\n\t")
+              .sub("\n\t", ": #{e}#{e.class ? " (#{e.class})" : ""}\n\t")
             break
           end
-          p result
+          @handler.call(result)
           @files = [@main] + result.required_files.to_a if result.required_files
+          log_status "Reloaded."
           break
         end
       end

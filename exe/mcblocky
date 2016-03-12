@@ -37,8 +37,22 @@ module McBlocky
         log_status "Stopping server..."
         $server.stop
       end
-      listener = Listener.from_config do
-        log_status "Reloading"
+      $server.on_message /^!/ do |message, user|
+        next unless $context
+        command, _, args = message.partition(/\s+/)
+        $context.helpers.each do |aliases, block|
+          aliases = [aliases] if String === aliases
+          aliases.each do |a|
+            if command == "!#{a}"
+              block.call(args, user, a)
+              break
+            end
+          end
+        end
+      end
+      listener = Listener.from_config do |context|
+        p context
+        $context = context
       end
       listener.start
       $server.loop
