@@ -28,18 +28,19 @@ module McBlocky
       log_status "Server is ready! Connect to 127.0.0.1:25565"
       reader = Thread.new do
         until $stdin.closed?
-          line = $stdin.gets
-          $server.command line.chomp
+          line = $stdin.gets.chomp
+          $server.command line unless line.empty?
         end
       end
       $server.say("McBlocky is ready")
-      $server.on_message '!hello' do |line, user|
-        $server.say("Hello #{user}")
-      end
       $server.on_message '!stop' do
         log_status "Stopping server..."
         $server.stop
       end
+      listener = Listener.from_config do
+        log_status "Reloading"
+      end
+      listener.start
       $server.loop
     rescue SystemExit
       if $server
@@ -55,8 +56,11 @@ module McBlocky
       reader.kill if reader
     rescue Exception
       log_error "Caught error, stopping server..."
-      $server.stop if $server
-      reader.kill if reader
+      begin
+        $server.stop if $server
+        reader.kill if reader
+      rescue
+      end
       log_error "Error trace:"
       raise
     end

@@ -19,7 +19,7 @@ module McBlocky
         return if @valid
         raise ArgumentError, "No config loaded" unless config
         raise ArgumentError, "No server section" unless config['server']
-        raise ArgumentError, "No code section" unless config['code']
+        config['code'] ||= {}
 
         if config['server']['ops']
           raise ArgumentError, "server.ops must be an array" unless Array === config['server']['ops']
@@ -38,9 +38,10 @@ module McBlocky
           raise ArgumentError, "No server.jar specified" if !jar or jar.empty?
           raise ArgumentError, "Jar specified in server.jar does not exist" unless File.exist? jar
 
+          config['code']['main'] ||= "#{File.basename File.dirname(config_path)}.rb"
           main = config['code']['main']
           raise ArgumentError, "No code.main specified" if !main or main.empty?
-          raise ArgumentError, "File specified in code.main does not exist" unless File.exist? main or File.exist? "#{main}.rb"
+          raise ArgumentError, "#{main} does not exist" unless File.exist? main or File.exist? "#{main}.rb"
         end
 
         @valid = true

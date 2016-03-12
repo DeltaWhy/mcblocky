@@ -10,4 +10,5 @@ server:
     gamemode: 1
     motd: McBlocky Hello World
 code:
-  main: hello.rb
+  # Defaults to the name of the directory
+  # main: hello.rb
