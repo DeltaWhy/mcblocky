@@ -18,6 +18,12 @@ module McBlocky
       end
     end
 
+    def log_message(message)
+      @@mutex.synchronize do
+        puts "#{MAGENTA}#{message.chomp}#{RESET}"
+      end
+    end
+
     def log_command(message)
       @@mutex.synchronize do
         puts "#{CYAN}#{BOLD}/#{message.chomp}#{RESET}"

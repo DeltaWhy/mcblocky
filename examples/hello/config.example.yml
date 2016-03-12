@@ -1,0 +1,13 @@
+server:
+  # If java is not on your $PATH you must set this
+  # java: path/to/java
+  jar: path/to/minecraft_server.1.9.jar
+  workdir: server
+  ops:
+    - DeltaWhy
+  eula: true
+  properties:
+    gamemode: 1
+    motd: McBlocky Hello World
+code:
+  main: hello.rb
