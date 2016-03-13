@@ -1,3 +1,5 @@
+require 'json'
+
 module McBlocky
   module DSL
     def helper(*command, &block)
@@ -14,6 +16,10 @@ module McBlocky
       def scoreboard(*args, &block)
         if block
           d = SimpleDelegator.new(self)
+          d.instance_variable_set :@a, @a
+          d.instance_variable_set :@p, @p
+          d.instance_variable_set :@r, @r
+          d.instance_variable_set :@e, @e
           d.instance_variable_set :@args, args
           def d.method_missing(m, *a)
             super
@@ -26,6 +32,21 @@ module McBlocky
         end
       end
 
+      def tellraw(player, *args)
+        if args.length < 1
+          raise ArgumentError, "No message given in tellraw"
+        end
+        obj = []
+        args.each do |arg|
+          if Array === arg
+            obj += arg
+          else
+            obj << arg
+          end
+        end
+        command :tellraw, player, JSON.dump(obj)
+      end
+
       COMMANDS.each do |c|
         unless method_defined? c
           define_method c do |*args|
@@ -35,12 +56,35 @@ module McBlocky
       end
     end
 
-    class Initial < SimpleDelegator
+    class Initial
+      def initialize(context)
+        @context = context
+        @a = Selector.new '@a'
+        @p = Selector.new '@p'
+        @r = Selector.new '@r'
+        @e = Selector.new '@e'
+      end
+
       def command(*args)
-        context.initial_commands << args.map(&:to_s).join(' ')
+        @context.initial_commands << args.map(&:to_s).join(' ')
       end
 
       include Commands
+    end
+
+    class Selector
+      def initialize(name)
+        @name = name
+      end
+
+      def [](**args)
+        pairs = args.map{|k,v| "#{k}=#{v}"}
+        "#{@name}[#{pairs.join(',')}]"
+      end
+
+      def to_s
+        @name
+      end
     end
   end
 end

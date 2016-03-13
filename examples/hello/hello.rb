@@ -5,6 +5,9 @@ helper 'hello' do |user|
 end
 
 initial do
+  gamerule 'doDaylightCycle', false
+  time :set, 'day'
+
   ['red', 'blue', 'yellow', 'green'].each do |color|
     scoreboard :teams do
       add color.capitalize
@@ -15,4 +18,6 @@ initial do
     add 'Spectators'
     option 'Spectators', :color, 'gray'
   end
+
+  tellraw @a[team: 'Red'], {text: "Hello", color: "red"}
 end
