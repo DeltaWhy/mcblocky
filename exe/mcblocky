@@ -51,7 +51,13 @@ module McBlocky
         end
       end
       listener = Listener.from_config do |context|
-        p context
+        unless $context and $context.initial_commands == context.initial_commands
+          context.initial_commands.each do |command|
+            $server.command command
+          end
+        else
+          log_status "Initial commands did not change"
+        end
         $context = context
       end
       listener.start

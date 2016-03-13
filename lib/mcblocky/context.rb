@@ -14,6 +14,10 @@ module McBlocky
       @required_files ||= Set.new
     end
 
+    def initial_commands
+      @initial_commands ||= []
+    end
+
     def context
       self
     end
