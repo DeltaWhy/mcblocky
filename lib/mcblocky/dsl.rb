@@ -35,7 +35,11 @@ module McBlocky
       chains << chain
     end
 
-    def at(x, y, z, kind=:normal, &block)
+    def at(x, y, z, data=0, kind=:normal, &block)
+      if Symbol === data
+        kind = data
+        data = 0
+      end
       block_kind = case kind
                    when :normal
                      'minecraft:command_block'
@@ -46,7 +50,7 @@ module McBlocky
                    else
                      raise ArgumentError, 'Unknown command block type'
                    end
-      cblock = CommandBlock.new(x, y, z, 0, block_kind)
+      cblock = CommandBlock.new(x, y, z, data, block_kind)
       cblock.instance_exec(&block)
       blocks[Location.new(x, y, z)] = cblock
     end
@@ -54,6 +58,11 @@ module McBlocky
     def setblock(x, y, z, kind, data=0, replacemode='replace', nbt={})
       block = Block.new(x, y, z, kind, data, nbt)
       blocks[Location.new(x, y, z)] = block
+    end
+
+    def fill(x1, y1, z1, x2, y2, z2, kind, data=0)
+      block = Block.new(nil, nil, nil, kind, data)
+      rects[Rect.new(x1, y1, z1, x2, y2, z2)] = block
     end
 
     def chest(x, y, z, data=0, &block)

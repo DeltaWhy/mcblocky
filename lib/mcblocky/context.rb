@@ -34,20 +34,16 @@ module McBlocky
       @blocks ||= {}
     end
 
+    def rects
+      @rects ||= {}
+    end
+
     def areas
       @areas ||= []
     end
 
     def context
       self
-    end
-
-    def area(x1, y1, z1, x2, y2, z2)
-      x1, x2 = x2, x1 if x1 > x2
-      y1, y2 = y2, y1 if y1 > y2
-      z1, z2 = z2, z1 if z1 > z2
-      areas << [x1, y1, z1, x2, y2, z2]
-      yield
     end
 
     def require(file)

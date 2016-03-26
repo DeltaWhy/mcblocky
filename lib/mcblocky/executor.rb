@@ -50,8 +50,18 @@ module McBlocky
         fill x1, y1, z2, x2, y2, z2, 'minecraft:stained_glass', '7'
       end
 
-      #old_ats = old_context ? old_context.chains.select{|x|x.kind == :at} : []
-      #ats = context.chains.select{|x|x.kind == :at}
+      rects = (old_context ? old_context.rects.keys : []) + context.rects.keys
+      rects.uniq.each do |rect|
+        old_block = old_context ? old_context.rects[rect] : nil
+        block = context.rects[rect]
+        if old_block and !block
+          fill rect.x1, rect.y1, rect.z1, rect.x2, rect.y2, rect.z2, 'minecraft:air'
+        elsif old_block and old_block != block
+          fill rect.x1, rect.y1, rect.z1, rect.x2, rect.y2, rect.z2, block.block_kind, block.block_data, 'replace', old_block.block_kind, old_block.block_data
+        else
+          fill rect.x1, rect.y1, rect.z1, rect.x2, rect.y2, rect.z2, block.block_kind, block.block_data
+        end
+      end
 
       locations = (old_context ? old_context.blocks.keys : []) + context.blocks.keys
       locations.uniq.each do |loc|
@@ -62,7 +72,6 @@ module McBlocky
 
       # after blocks are set
       context.chains.select{|x|x.kind == :after}.each do |c|
-        p c.commands
         self.commands += c.commands
       end
     end
@@ -73,7 +82,6 @@ module McBlocky
         return
       end
 
-      p block.nbt
       if old_block and old_block.block_kind == block.block_kind and old_block.block_data == block.block_data
         return if old_block.nbt == block.nbt
         blockdata block.x, block.y, block.z, block.nbt

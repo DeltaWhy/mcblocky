@@ -33,6 +33,7 @@ end
 #     tellraw @a[team: 'Red'], {text: "Hello", color: "red"}
 #   end
 # end
+fill 171, 78, 242, 181, 78, 252, 'minecraft:stained_glass', Color::BLUE
 
 cleanup do
   fill 172, 80, 243, 174, 80, 243, 'minecraft:air', 0, 'replace'
