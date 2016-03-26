@@ -51,14 +51,41 @@ module McBlocky
         end
       end
       listener = Listener.from_config do |context|
-        unless $context and $context.initial_commands == context.initial_commands
-          context.initial_commands.each do |command|
-            $server.command command
-          end
-        else
-          log_status "Initial commands did not change"
-        end
+        old_context = $context
         $context = context
+        old_initials = old_context ? old_context.chains.select{|x|x.kind == :initial} : []
+        initials = context.chains.select{|x|x.kind == :initial}
+        initials.each_with_index do |chain, i|
+          old_chain = old_initials[i]
+          if old_chain
+            matches = true
+            chain.commands.each_with_index do |cmd, j|
+              if matches
+                old_cmd = old_chain.commands[j]
+                next if old_cmd == cmd
+                matches = false
+                $server.command cmd
+              else
+                $server.command cmd
+              end
+            end
+          else
+            chain.commands.each {|cmd| $server.command cmd}
+          end
+        end
+        if old_context
+          old_context.areas.each do |x1, y1, z1, x2, y2, z2|
+            $server.command ['fill', x1, y1, z1, x2, y2, z2, 'minecraft:air'].join(' ')
+          end
+        end
+        context.areas.each do |x1, y1, z1, x2, y2, z2|
+          $server.command ['fill', x1, y1, z1, x2, y1, z2, 'minecraft:stained_glass', '7'].join(' ')
+          $server.command ['fill', x1, y2, z1, x2, y2, z2, 'minecraft:stained_glass', '7'].join(' ')
+          $server.command ['fill', x1, y1, z1, x1, y2, z2, 'minecraft:stained_glass', '7'].join(' ')
+          $server.command ['fill', x2, y1, z1, x2, y2, z2, 'minecraft:stained_glass', '7'].join(' ')
+          $server.command ['fill', x1, y1, z1, x2, y2, z1, 'minecraft:stained_glass', '7'].join(' ')
+          $server.command ['fill', x1, y1, z2, x2, y2, z2, 'minecraft:stained_glass', '7'].join(' ')
+        end
       end
       listener.start
       $server.loop

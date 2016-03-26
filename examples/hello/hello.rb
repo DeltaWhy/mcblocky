@@ -19,5 +19,11 @@ initial do
     option 'Spectators', :color, 'gray'
   end
 
-  tellraw @a[team: 'Red'], {text: "Hello", color: "red"}
+  tellraw @a[team: 'Red'], {text: "Hello world", color: "red"}
+end
+
+area 171, 78, 242, 181, 83, 252 do
+  repeat do
+    tellraw @a[team: 'Red'], {text: "Hello", color: "red"}
+  end
 end

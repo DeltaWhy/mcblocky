@@ -1,3 +1,5 @@
+load File.expand_path('dsl/selector.rb', File.dirname(__FILE__))
+load File.expand_path('dsl/commands.rb', File.dirname(__FILE__))
 require 'json'
 
 module McBlocky
@@ -7,84 +9,43 @@ module McBlocky
     end
 
     def initial(&block)
-      Initial.new(self).instance_exec(&block)
+      chain = Commands.new(:initial)
+      chain.instance_exec(&block)
+      chains << chain
     end
 
-    module Commands
-      COMMANDS = [:achievement, :ban, :ban_ip, :banlist, :blockdata, :clear, :clone, :debug, :defaultgamemode, :deop, :difficulty, :effect, :enchant, :entitydata, :execute, :fill, :gamemode, :gamerule, :give, :help, :kick, :kill, :list, :me, :op, :pardon, :pardon_ip, :particle, :playsound, :replaceitem, :save_all, :save_off, :save_on, :say, :scoreboard, :seed, :setblock, :setidletimeout, :setworldspawn, :spawnpoint, :spreadplayers, :stats, :stop, :summon, :tell, :tellraw, :testfor, :testforblock, :testforblocks, :time, :title, :toggledownfall, :tp, :trigger, :weather, :whitelist, :worldborder, :xp]
-
-      def scoreboard(*args, &block)
-        if block
-          d = SimpleDelegator.new(self)
-          d.instance_variable_set :@a, @a
-          d.instance_variable_set :@p, @p
-          d.instance_variable_set :@r, @r
-          d.instance_variable_set :@e, @e
-          d.instance_variable_set :@args, args
-          def d.method_missing(m, *a)
-            super
-          rescue NoMethodError
-            command :scoreboard, *@args, m, *a
-          end
-          d.instance_exec(&block)
-        else
-          command :scoreboard, *args
-        end
-      end
-
-      def tellraw(player, *args)
-        if args.length < 1
-          raise ArgumentError, "No message given in tellraw"
-        end
-        obj = []
-        args.each do |arg|
-          if Array === arg
-            obj += arg
-          else
-            obj << arg
-          end
-        end
-        command :tellraw, player, JSON.dump(obj)
-      end
-
-      COMMANDS.each do |c|
-        unless method_defined? c
-          define_method c do |*args|
-            command c.to_s.gsub('_', '-'), *args
-          end
-        end
-      end
+    def repeat(&block)
+      chain = Commands.new(:repeat)
+      chain.instance_exec(&block)
+      chains << chain
     end
 
-    class Initial
-      def initialize(context)
-        @context = context
-        @a = Selector.new '@a'
-        @p = Selector.new '@p'
-        @r = Selector.new '@r'
-        @e = Selector.new '@e'
+    def to_nbt(obj)
+      case obj
+      when String
+        "\"#{obj}\""
+      when Fixnum, Float
+        obj.to_s
+      when Array
+        "[#{obj.map(method(:to_nbt)).join(',')}]"
+      when Hash
+        pairs = obj.map do |k,v|
+          "#{k}:#{to_nbt v}"
+        end
+        "{#{pairs.join(',')}}"
+      else
+        raise ArgumentError, "No NBT form for #{obj}"
       end
-
-      def command(*args)
-        @context.initial_commands << args.map(&:to_s).join(' ')
-      end
-
-      include Commands
     end
+    module_function :to_nbt
 
-    class Selector
-      def initialize(name)
-        @name = name
-      end
-
-      def [](**args)
-        pairs = args.map{|k,v| "#{k}=#{v}"}
-        "#{@name}[#{pairs.join(',')}]"
-      end
-
-      def to_s
-        @name
-      end
+    module Facing
+      DOWN = 0
+      UP = 1
+      NORTH = 2
+      SOUTH = 3
+      WEST = 4
+      EAST = 5
     end
   end
 end
