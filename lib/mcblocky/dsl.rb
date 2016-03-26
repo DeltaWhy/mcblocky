@@ -2,6 +2,7 @@ load File.expand_path('dsl/selector.rb', File.dirname(__FILE__))
 load File.expand_path('dsl/commands.rb', File.dirname(__FILE__))
 load File.expand_path('dsl/command_block.rb', File.dirname(__FILE__))
 load File.expand_path('dsl/block.rb', File.dirname(__FILE__))
+load File.expand_path('dsl/container.rb', File.dirname(__FILE__))
 require 'json'
 
 module McBlocky
@@ -55,6 +56,36 @@ module McBlocky
       blocks[Location.new(x, y, z)] = block
     end
 
+    def chest(x, y, z, data=0, &block)
+      container = Container.new(x, y, z, 'minecraft:chest', data)
+      container.instance_exec(&block)
+      blocks[Location.new(x, y, z)] = container
+    end
+
+    def trapped_chest(x, y, z, data=0, &block)
+      container = Container.new(x, y, z, 'minecraft:trapped_chest', data)
+      container.instance_exec(&block)
+      blocks[Location.new(x, y, z)] = container
+    end
+
+    def dispenser(x, y, z, data=0, &block)
+      container = Container.new(x, y, z, 'minecraft:dispenser', data)
+      container.instance_exec(&block)
+      blocks[Location.new(x, y, z)] = container
+    end
+
+    def dropper(x, y, z, data=0, &block)
+      container = Container.new(x, y, z, 'minecraft:dropper', data)
+      container.instance_exec(&block)
+      blocks[Location.new(x, y, z)] = container
+    end
+
+    def furnace(x, y, z, data=0, &block)
+      container = Container.new(x, y, z, 'minecraft:furnace', data)
+      container.instance_exec(&block)
+      blocks[Location.new(x, y, z)] = container
+    end
+
     def to_nbt(obj)
       case obj
       when String
@@ -62,7 +93,7 @@ module McBlocky
       when Fixnum, Float
         obj.to_s
       when Array
-        "[#{obj.map(method(:to_nbt)).join(',')}]"
+        "[#{obj.map{|x| to_nbt x}.join(',')}]"
       when Hash
         pairs = obj.map do |k,v|
           "#{k}:#{to_nbt v}"
@@ -81,6 +112,25 @@ module McBlocky
       SOUTH = 3
       WEST = 4
       EAST = 5
+    end
+
+    module Color
+      WHITE = 0
+      ORANGE = 1
+      MAGENTA = 2
+      LIGHT_BLUE = 3
+      YELLOW = 4
+      LIME = 5
+      PINK = 6
+      GRAY = 7
+      LIGHT_GRAY = 8
+      CYAN = 9
+      PURPLE = 10
+      BLUE = 11
+      BROWN = 12
+      GREEN = 13
+      RED = 14
+      BLACK = 15
     end
   end
 end

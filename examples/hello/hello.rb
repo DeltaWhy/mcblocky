@@ -48,6 +48,12 @@ end
 
 setblock 175, 79, 248, 'minecraft:standing_sign', 0, 'replace', {'Text1'=>'{"text":"hello friends"}'}
 
+furnace 176, 79, 248 do
+  item 'minecraft:diamond', 64
+  item 'minecraft:spawn_egg', 1, 0, {'EntityTag'=>{'id'=>'Chicken', 'CustomName'=>'Chickfila'}, 'display'=>{'Name'=>'Chicken Egg'}}
+  item 'minecraft:gold_ingot'
+end
+
 after do
   # setblock 175, 79, 248, 'minecraft:standing_sign', 0, 'replace'
   # blockdata 175, 79, 248, {'Text1'=>'{"text":"hola mundo"}'}

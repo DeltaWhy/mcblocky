@@ -73,6 +73,7 @@ module McBlocky
         return
       end
 
+      p block.nbt
       if old_block and old_block.block_kind == block.block_kind and old_block.block_data == block.block_data
         return if old_block.nbt == block.nbt
         blockdata block.x, block.y, block.z, block.nbt
