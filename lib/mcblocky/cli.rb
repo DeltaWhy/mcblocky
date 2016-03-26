@@ -13,6 +13,7 @@ module McBlocky
 
     desc "list", "List commands that would be sent to the server"
     option :watch, aliases: '-w'
+    option :diff
     def list
       begin
         Config.load(options[:config])
@@ -22,8 +23,10 @@ module McBlocky
         exit 1
       end
       if options[:watch]
+        $old_context = nil
         listener = Listener.from_config do |context|
-          Executor.to_commands(context).each{|c| puts c}
+          Executor.to_commands(context, options[:diff] ? $old_context : nil).each{|c| puts c}
+          $old_context = context
         end
         listener.start
         while true; end

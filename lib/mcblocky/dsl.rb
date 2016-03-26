@@ -1,6 +1,7 @@
 load File.expand_path('dsl/selector.rb', File.dirname(__FILE__))
 load File.expand_path('dsl/commands.rb', File.dirname(__FILE__))
 load File.expand_path('dsl/command_block.rb', File.dirname(__FILE__))
+load File.expand_path('dsl/block.rb', File.dirname(__FILE__))
 require 'json'
 
 module McBlocky
@@ -34,15 +35,30 @@ module McBlocky
     end
 
     def at(x, y, z, kind=:normal, &block)
-      chain = CommandBlock.new(x, y, z, kind)
-      chain.instance_exec(&block)
-      chains << chain
+      block_kind = case kind
+                   when :normal
+                     'minecraft:command_block'
+                   when :chain
+                     'minecraft:chain_command_block'
+                   when :repeating
+                     'minecraft:repeating_command_block'
+                   else
+                     raise ArgumentError, 'Unknown command block type'
+                   end
+      cblock = CommandBlock.new(x, y, z, 0, block_kind)
+      cblock.instance_exec(&block)
+      blocks[Location.new(x, y, z)] = cblock
+    end
+
+    def setblock(x, y, z, kind, data=0, replacemode='replace', nbt={})
+      block = Block.new(x, y, z, kind, data, nbt)
+      blocks[Location.new(x, y, z)] = block
     end
 
     def to_nbt(obj)
       case obj
       when String
-        "\"#{obj}\""
+        JSON.dump(obj)
       when Fixnum, Float
         obj.to_s
       when Array

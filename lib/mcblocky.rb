@@ -10,6 +10,7 @@ module McBlocky
 end
 
 # non-reloadable
+require "mcblocky/location"
 require "mcblocky/config"
 require "mcblocky/listener"
 require "mcblocky/server"

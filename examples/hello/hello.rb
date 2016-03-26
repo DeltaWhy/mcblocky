@@ -46,6 +46,10 @@ at 172, 81, 243 do
   fill '~ ~-1 ~ ~2 ~-1 ~', 'minecraft:redstone_block'
 end
 
+setblock 175, 79, 248, 'minecraft:standing_sign', 0, 'replace', {'Text1'=>'{"text":"hello friends"}'}
+
 after do
+  # setblock 175, 79, 248, 'minecraft:standing_sign', 0, 'replace'
+  # blockdata 175, 79, 248, {'Text1'=>'{"text":"hola mundo"}'}
   setblock 172, 80, 243, 'minecraft:redstone_block', 0, 'replace'
 end

@@ -30,6 +30,10 @@ module McBlocky
       @chains ||= []
     end
 
+    def blocks
+      @blocks ||= {}
+    end
+
     def areas
       @areas ||= []
     end
