@@ -1,6 +1,6 @@
 require_relative 'helpers/foo'
 
-helper 'hello' do |user|
+helper 'hello' do |args, user|
   server.say "Hello, #{user}!"
 end
 

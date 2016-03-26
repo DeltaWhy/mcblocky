@@ -47,13 +47,6 @@ module McBlocky
         @valid = true
       end
 
-      def create_server
-        raise ArgumentError, "No config loaded" unless @valid
-        Dir.chdir File.dirname(config_path) do
-          Dir.mkdir
-        end
-      end
-
       protected
       def which(cmd)
         exts = ENV['PATHEXT'] ? ENV['PATHEXT'].split(';') : ['']

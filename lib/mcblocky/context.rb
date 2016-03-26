@@ -2,8 +2,20 @@ require 'mcblocky/dsl'
 
 module McBlocky
   class Context
-    def server
-      $server
+    attr_accessor :server
+
+    def self.run_file(file, dir=nil)
+      dir = File.dirname(file) unless dir
+      Dir.chdir dir do
+        begin
+          ctx = Context.new
+          f = open(file)
+          ctx.instance_eval(f.read, file)
+          return ctx
+        ensure
+          f.close if f
+        end
+      end
     end
 
     def helpers

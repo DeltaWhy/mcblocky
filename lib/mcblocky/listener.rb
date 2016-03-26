@@ -15,7 +15,6 @@ module McBlocky
       @main = main
       @files = [main]
       @listener = Listen.to(dir, only: /\.rb$/, &method(:handle))
-      @runner = Runner.new(dir, main)
       @handler = block
     end
 
@@ -23,7 +22,7 @@ module McBlocky
       @listener.start
       begin
         log_status "Loading"
-        result = @runner.run
+        result = Context.run_file(@main, @dir)
       rescue Exception
         log_error "Error in loaded file:"
         puts $!
@@ -39,7 +38,8 @@ module McBlocky
         if modified.include? f or added.include? f or removed.include? f
           begin
             log_status "Reloading..."
-            result = @runner.run
+            McBlocky.reload!
+            result = Context.run_file(@main, @dir)
           rescue Exception => e
             log_error "Error in loaded file:"
             puts e.backtrace.join("\n\t")

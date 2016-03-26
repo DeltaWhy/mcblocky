@@ -11,7 +11,7 @@ module McBlocky
       workdir = File.expand_path(server['workdir'], File.dirname(Config.config_path))
       Dir.mkdir workdir unless Dir.exist? workdir
       Dir.chdir workdir do
-        if server['eula'] and !File.exist? 'eula.txt'
+        if server['eula']
           open('eula.txt', 'w') do |f|
             f.write("eula=true#{$/}")
           end
@@ -89,26 +89,6 @@ module McBlocky
       @stdin.write("say #{message}#{$/}")
     end
 
-    def wait_for_line(match)
-      begin
-        line = @queue.pop
-        @matchers.each do |m, block|
-          block.call(line) if m === line
-        end
-        if line =~ /\<([^>]+)\> (.*)$/
-          user, message = $1, $2
-          @message_matchers.each do |m, u, block|
-            if !u or u == user or u === user
-              if m === message
-                block.call(message, user)
-              end
-            end
-          end
-        end
-      end until match and match === line
-      line
-    end
-
     def on_line(match, &block)
       @matchers << [match, block]
     end
@@ -127,11 +107,32 @@ module McBlocky
       join
     end
 
-    def loop
+    def loop!
       wait_for_line nil
     rescue ServerShutdown
       log_status "Server stopped."
       join
+    end
+
+    private
+    def wait_for_line(match)
+      begin
+        line = @queue.pop
+        @matchers.each do |m, block|
+          block.call(line) if m === line
+        end
+        if line =~ /\<([^>]+)\> (.*)$/
+          user, message = $1, $2
+          @message_matchers.each do |m, u, block|
+            if !u or u == user or u === user
+              if m === message
+                block.call(message, user)
+              end
+            end
+          end
+        end
+      end until match and match === line
+      line
     end
 
     def join
