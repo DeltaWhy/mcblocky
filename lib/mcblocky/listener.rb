@@ -13,8 +13,16 @@ module McBlocky
     def initialize(dir, main, &block)
       @dir = dir
       @main = main
-      @files = [main]
-      @listener = Listen.to(dir, only: /\.rb$/, &method(:handle))
+      @initial_files = [
+        @main,
+        File.expand_path('../dsl.rb', __FILE__),
+        File.expand_path('../dsl/commands.rb', __FILE__),
+        File.expand_path('../dsl/selector.rb', __FILE__),
+        File.expand_path('../context.rb', __FILE__),
+        File.expand_path('../executor.rb', __FILE__),
+      ]
+      @files = @initial_files
+      @listener = Listen.to(dir, File.dirname(__FILE__), only: /\.rb$/, &method(:handle))
       @handler = block
     end
 
@@ -29,7 +37,7 @@ module McBlocky
         return
       end
       @handler.call(result)
-      @files = [@main] + result.required_files.to_a if result.required_files
+      @files = @initial_files + result.required_files.to_a if result.required_files
     end
 
     def handle(modified, added, removed)
@@ -47,7 +55,7 @@ module McBlocky
             break
           end
           @handler.call(result)
-          @files = [@main] + result.required_files.to_a if result.required_files
+          @files = @initial_files + result.required_files.to_a if result.required_files
           log_status "Reloaded."
           break
         end

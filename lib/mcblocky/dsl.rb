@@ -1,5 +1,6 @@
 load File.expand_path('dsl/selector.rb', File.dirname(__FILE__))
 load File.expand_path('dsl/commands.rb', File.dirname(__FILE__))
+load File.expand_path('dsl/command_block.rb', File.dirname(__FILE__))
 require 'json'
 
 module McBlocky
@@ -14,8 +15,26 @@ module McBlocky
       chains << chain
     end
 
+    def cleanup(&block)
+      chain = Commands.new(:cleanup)
+      chain.instance_exec(&block)
+      chains << chain
+    end
+
+    def after(&block)
+      chain = Commands.new(:after)
+      chain.instance_exec(&block)
+      chains << chain
+    end
+
     def repeat(&block)
       chain = Commands.new(:repeat)
+      chain.instance_exec(&block)
+      chains << chain
+    end
+
+    def at(x, y, z, kind=:normal, &block)
+      chain = CommandBlock.new(x, y, z, kind)
       chain.instance_exec(&block)
       chains << chain
     end

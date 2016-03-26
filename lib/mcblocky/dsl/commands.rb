@@ -1,18 +1,16 @@
 module McBlocky::DSL
   class Commands
     attr_reader :kind
+    attr_accessor :commands
 
     def initialize(kind, *args)
       @kind = kind
       @args = args
+      @commands = []
       @a = Selector.new '@a'
       @p = Selector.new '@p'
       @r = Selector.new '@r'
       @e = Selector.new '@e'
-    end
-
-    def commands
-      @commands ||= []
     end
 
     def command(*args)
@@ -27,10 +25,6 @@ module McBlocky::DSL
 
     def blockdata(x, y, z, dataTag)
       command :blockdata, x, y, z, to_nbt(dataTag)
-    end
-
-    def clear(player, item, data, maxCount, dataTag)
-
     end
 
     def scoreboard(*args, &block)
