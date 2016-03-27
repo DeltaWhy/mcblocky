@@ -63,6 +63,10 @@ module McBlocky
         end
       end
 
+      context.chains.select{|x|x.kind == :repeat}.each do |c|
+        do_repeat context, c
+      end
+
       locations = (old_context ? old_context.blocks.keys : []) + context.blocks.keys
       locations.uniq.each do |loc|
         old = old_context ? old_context.blocks[loc] : nil
@@ -89,6 +93,57 @@ module McBlocky
         setblock block.x, block.y, block.z, block.block_kind, block.block_data, 'replace'
         blockdata block.x, block.y, block.z, block.nbt
       end
+    end
+
+    def do_repeat(context, chain)
+      sequence = fill_space(chain.rect)
+      if chain.commands.length > sequence.length
+        raise ArgumentError, "Chain is too long for the provided space"
+      end
+      kind = 'minecraft:repeating_command_block'
+      chain.commands.each_with_index do |c,i|
+        cursor = sequence[i]
+        next_cursor = if i+1 < sequence.length
+                        sequence[i+1]
+                      else
+                        Location.new(cursor.x, cursor.y+1, cursor.z)
+                      end
+        facing = if next_cursor.x - cursor.x == 1
+                   DSL::Facing::EAST
+                 elsif next_cursor.x - cursor.x == -1
+                   DSL::Facing::WEST
+                 elsif next_cursor.y - cursor.y == 1
+                   DSL::Facing::UP
+                 elsif next_cursor.y - cursor.y == -1
+                   DSL::Facing::DOWN
+                 elsif next_cursor.z - cursor.z == 1
+                   DSL::Facing::SOUTH
+                 elsif next_cursor.z - cursor.z == -1
+                   DSL::Facing::NORTH
+                 end
+        context.blocks[cursor] = DSL::CommandBlock.new(cursor.x, cursor.y, cursor.z, facing, kind, {'auto'=>1})
+        context.blocks[cursor].command c
+        kind = 'minecraft:chain_command_block'
+      end
+    end
+
+    def fill_space(rect)
+      path = []
+      zrange = rect.z1..rect.z2
+      zrange.each do |z|
+        rz = z - rect.z1
+        yrange = rect.y1..rect.y2
+        yrange = yrange.to_a.reverse if rz % 2 != 0
+        yrange.each do |y|
+          ry = y - rect.y1
+          xrange = rect.x1..rect.x2
+          xrange = xrange.to_a.reverse if (ry+rz) % 2 != 0
+          xrange.each do |x|
+            path << Location.new(x, y, z)
+          end
+        end
+      end
+      path
     end
   end
 end

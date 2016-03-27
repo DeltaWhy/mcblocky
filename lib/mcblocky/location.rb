@@ -71,5 +71,25 @@ module McBlocky
         self.z1, self.z2 = self.z2, self.z1
       end
     end
+
+    def p1
+      @p1 ||= Location.new(x1, y1, z1)
+    end
+
+    def p2
+      @p2 ||= Location.new(x2, y2, z2)
+    end
+
+    def w
+      x2 - x1
+    end
+
+    def h
+      y2 - y1
+    end
+
+    def d
+      z2 - z1
+    end
   end
 end

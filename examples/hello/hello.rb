@@ -24,15 +24,34 @@ initial do
     add 'Spectators'
     option 'Spectators', :color, 'gray'
   end
+  scoreboard :objectives do
+    add 'SwitchingTeam', 'dummy'
+  end
 
   tellraw @a[team: 'Red'], {text: "Hello world", color: "red"}
 end
 
-# area 171, 78, 242, 181, 83, 252 do
-#   repeat do
-#     tellraw @a[team: 'Red'], {text: "Hello", color: "red"}
-#   end
-# end
+repeat 171, 82, 242, 175, 84, 247 do
+  scoreboard :players, :set, @a[x: 172, y: 81, z: 236, r: 1, team: '!Red'], 'SwitchingTeam', 1
+  scoreboard :players, :set, @a[x: 170, y: 81, z: 236, r: 1, team: '!Blue'], 'SwitchingTeam', 1
+  execute @a[x: 170, y: 81, z: 236, r: 1, score_SwitchingTeam_min: 1], '~ ~ ~', 'scoreboard teams join Blue @p'
+  execute @a[x: 170, y: 81, z: 236, r: 1, score_SwitchingTeam_min: 1], '~ ~ ~', :tellraw, @a, JSON.dump([
+    {selector: @p},
+    {text: ' joined the ', color: 'reset'},
+    {text: 'Blue', color: 'blue'},
+    {text: ' team', color: 'reset'}
+  ])
+  execute @a[x: 172, y: 81, z: 236, r: 1, score_SwitchingTeam_min: 1], '~ ~ ~', 'scoreboard teams join Red @p'
+  execute @a[x: 172, y: 81, z: 236, r: 1, score_SwitchingTeam_min: 1], '~ ~ ~', :tellraw, @a, JSON.dump([
+    {selector: @p},
+    {text: ' joined the ', color: 'reset'},
+    {text: 'Red', color: 'red'},
+    {text: ' team', color: 'reset'}
+  ])
+  scoreboard :players, :reset, @a[score_SwitchingTeam_min: 1], 'SwitchingTeam'
+  #tellraw @a[team: 'Red'], {text: "Hello", color: "red"}
+end
+
 fill 171, 78, 242, 181, 78, 252, 'minecraft:stained_glass', Color::BLUE
 
 cleanup do

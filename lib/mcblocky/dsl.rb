@@ -1,5 +1,6 @@
 load File.expand_path('dsl/selector.rb', File.dirname(__FILE__))
 load File.expand_path('dsl/commands.rb', File.dirname(__FILE__))
+load File.expand_path('dsl/repeat_chain.rb', File.dirname(__FILE__))
 load File.expand_path('dsl/command_block.rb', File.dirname(__FILE__))
 load File.expand_path('dsl/block.rb', File.dirname(__FILE__))
 load File.expand_path('dsl/container.rb', File.dirname(__FILE__))
@@ -29,13 +30,13 @@ module McBlocky
       chains << chain
     end
 
-    def repeat(&block)
-      chain = Commands.new(:repeat)
+    def repeat(x1, y1, z1, x2, y2, z2, &block)
+      chain = RepeatChain.new(x1, y1, z1, x2, y2, z2)
       chain.instance_exec(&block)
       chains << chain
     end
 
-    def at(x, y, z, data=0, kind=:normal, &block)
+    def at(x, y, z, data=0, kind=:normal, nbt={}, &block)
       if Symbol === data
         kind = data
         data = 0
@@ -50,7 +51,7 @@ module McBlocky
                    else
                      raise ArgumentError, 'Unknown command block type'
                    end
-      cblock = CommandBlock.new(x, y, z, data, block_kind)
+      cblock = CommandBlock.new(x, y, z, data, block_kind, nbt)
       cblock.instance_exec(&block)
       blocks[Location.new(x, y, z)] = cblock
     end

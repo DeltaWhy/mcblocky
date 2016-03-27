@@ -1,13 +1,14 @@
 module McBlocky::DSL
   class CommandBlock < Commands
     attr_reader :x, :y, :z, :block_data, :block_kind
-    def initialize(x, y, z, facing, kind)
+    def initialize(x, y, z, facing, kind, nbt={})
       super(:at)
       @x = x
       @y = y
       @z = z
       @block_data = facing
       @block_kind = kind
+      @nbt = nbt
     end
 
     def command(*args)
@@ -16,7 +17,7 @@ module McBlocky::DSL
     end
 
     def nbt
-      return {'Command'=>commands[0] || ''}
+      return @nbt.merge({'Command'=>commands[0] || ''})
     end
   end
 end
