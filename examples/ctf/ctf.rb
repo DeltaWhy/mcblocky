@@ -36,6 +36,7 @@ initial do
     option 'Blue', :color, 'blue'
     join 'Red', '--RED--'
     join 'Blue', '--BLUE--'
+    add 'Spectators'
   end
 
   scoreboard :objectives do
