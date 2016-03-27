@@ -110,8 +110,8 @@ repeat -8, 6, -6, 8, 8, -6 do
   tp @a[score_GAME_min:1, team:'Blue'], 50, 34, 12, 90, 0
   tp @a[score_GAME_min:1, team:'Spectators'], 25, 38, 12
   clear @a[score_GAME_min:1]
-  replaceitem :entity, @a[score_GAME_min:1, team:'Red'], 'slot.armor.chest', 'minecraft:leather_chestplate', 1, 0, to_nbt({display:{color:10040115}})
-  replaceitem :entity, @a[score_GAME_min:1, team:'Blue'], 'slot.armor.chest', 'minecraft:leather_chestplate', 1, 0, to_nbt({display:{color:3361970}})
+  replaceitem :entity, @a[score_GAME_min:1, team:'Red'], 'slot.armor.chest', 'minecraft:leather_chestplate', 1, 0, {display:{color:10040115}}
+  replaceitem :entity, @a[score_GAME_min:1, team:'Blue'], 'slot.armor.chest', 'minecraft:leather_chestplate', 1, 0, {display:{color:3361970}}
   execute @p[score_GAME_min:1], '~ ~ ~', 'scoreboard objectives setdisplay sidebar Score'
   execute @p[score_GAME_min:1], '~ ~ ~', 'fill 0 34 0 50 36 24 minecraft:air 0 replace minecraft:standing_banner'
   execute @p[score_GAME_min:1], '~ ~ ~', 'setblock 0 34 12 minecraft:standing_banner 12'

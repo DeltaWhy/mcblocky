@@ -18,6 +18,12 @@ module McBlocky
       end
     end
 
+    def self.run_block(&block)
+      ctx = Context.new
+      ctx.instance_exec &block
+      return ctx
+    end
+
     def helpers
       @helpers ||= []
     end

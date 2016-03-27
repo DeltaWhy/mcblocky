@@ -27,6 +27,23 @@ module McBlocky::DSL
       command :blockdata, x, y, z, to_nbt(dataTag)
     end
 
+    def gamerule(rule=nil, value=nil, &block)
+      if (rule and block) or (rule and value.nil?)
+        raise ArgumentError
+      end
+      unless block
+        command :gamerule, rule, value
+      else
+        o = PartialCommand.new(self, :gamerule)
+        o.instance_exec &block
+      end
+    end
+
+    def replaceitem(*args)
+      args[-1] = to_nbt(args[-1]) if Hash === args[-1]
+      command :replaceitem, *args
+    end
+
     def scoreboard(*args, &block)
       if block
         d = SimpleDelegator.new(self)
@@ -73,6 +90,21 @@ module McBlocky::DSL
           command c.to_s.gsub('_', '-'), *args
         end
       end
+    end
+  end
+
+  class PartialCommand
+    def initialize(context, *args)
+      @context = context
+      @args = args
+      @a = Selector.new '@a'
+      @p = Selector.new '@p'
+      @r = Selector.new '@r'
+      @e = Selector.new '@e'
+    end
+
+    def method_missing(m, *args)
+      @context.command *(@args + [m] + args)
     end
   end
 end
