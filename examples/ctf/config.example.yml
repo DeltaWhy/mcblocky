@@ -1,0 +1,15 @@
+server:
+  # If java is not on your $PATH you must set this
+  # java: path/to/java
+  jar: path/to/minecraft_server.1.9.jar
+  workdir: server
+  ops:
+    - DeltaWhy
+  eula: true
+  properties:
+    gamemode: 2
+    motd: McBlocky Capture the Flag
+    generator-settings: '3;minecraft:air;127;decoration;2;'
+code:
+  # Defaults to the name of the directory
+  # main: ctf.rb
