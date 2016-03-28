@@ -53,6 +53,15 @@ class NBTJSONTest < Minitest::Test
     assert_equal ['tellraw @a [{"text":"Hello"},{"text":"World"}]'], commands
   end
 
+  def test_title_encodes_json
+    commands = assert_valid do
+      initial do
+        title @a, :title, {text: "Score", color: "red"}
+      end
+    end
+    assert_equal ['title @a title [{"text":"Score","color":"red"}]'], commands
+  end
+
   def test_nested_nbt
     assert_equal '{tag:{display:{Name:"Bob"}}}', McBlocky::DSL.to_nbt(
       {tag: {display: {'Name'=>'Bob'}}}

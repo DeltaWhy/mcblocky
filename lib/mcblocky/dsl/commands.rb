@@ -23,8 +23,24 @@ module McBlocky::DSL
 
     COMMANDS = [:achievement, :ban, :ban_ip, :banlist, :blockdata, :clear, :clone, :debug, :defaultgamemode, :deop, :difficulty, :effect, :enchant, :entitydata, :execute, :fill, :gamemode, :gamerule, :give, :help, :kick, :kill, :list, :me, :op, :pardon, :pardon_ip, :particle, :playsound, :replaceitem, :save_all, :save_off, :save_on, :say, :scoreboard, :seed, :setblock, :setidletimeout, :setworldspawn, :spawnpoint, :spreadplayers, :stats, :stop, :summon, :tell, :tellraw, :testfor, :testforblock, :testforblocks, :time, :title, :toggledownfall, :tp, :trigger, :weather, :whitelist, :worldborder, :xp]
 
-    def blockdata(x, y, z, dataTag)
-      command :blockdata, x, y, z, to_nbt(dataTag)
+    def blockdata(*args)
+      args[-1] = to_nbt(args[-1]) if Hash === args[-1]
+      command :blockdata, *args
+    end
+
+    def execute(selector, *args, &block)
+      if args.empty?
+        args = ['~ ~ ~']
+      end
+      if block
+        chain = Commands.new(:execute)
+        chain.instance_exec &block
+        chain.commands.each do |c|
+          command :execute, selector, *args, c
+        end
+      else
+        command :execute, selector, *args
+      end
     end
 
     def gamerule(rule=nil, value=nil, &block)
@@ -63,9 +79,8 @@ module McBlocky::DSL
       end
     end
 
-    def setblock(x, y, z, block, dataValue=nil, replaceMode=nil, dataTag=nil)
-      dataTag = to_nbt(dataTag) if dataTag
-      args = [x, y, z, block, dataValue, replaceMode, dataTag].compact
+    def setblock(*args)
+      args[-1] = to_nbt(args[-1]) if Hash === args[-1]
       command :setblock, *args
     end
 
@@ -82,6 +97,21 @@ module McBlocky::DSL
         end
       end
       command :tellraw, player, JSON.dump(obj)
+    end
+
+    def title(selector, subcommand, *args)
+      if args.length < 1
+        raise ArgumentError, "No message given in title"
+      end
+      obj = []
+      args.each do |arg|
+        if Array === arg
+          obj += arg
+        else
+          obj << arg
+        end
+      end
+      command :title, selector, subcommand, JSON.dump(obj)
     end
 
     COMMANDS.each do |c|
