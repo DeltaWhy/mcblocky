@@ -125,9 +125,9 @@ repeat -8, 6, -6, 8, 8, -6 do
     scoreboard :objectives, :setdisplay, :sidebar, 'Score'
     fill 0, 34, 0, 50, 36, 24, 'minecraft:air', 0, :replace, 'minecraft:standing_banner'
     setblock 0, 34, 12, 'minecraft:standing_banner', 12
-    blockdata 0, 34, 12, {'Base'=>1}
+    blockdata 0, 34, 12, {Base: 1}
     setblock 50, 34, 12, 'minecraft:standing_banner', 4
-    blockdata 50, 34, 12, {'Base'=>4}
+    blockdata 50, 34, 12, {Base: 4}
     %w(HasFlag HasOwnFlag CapturingFlag CapturingOwnFlag ReturningFlag ReturningOwnFlag).each do |s|
       scoreboard :players, :reset, @a, s
     end
@@ -202,11 +202,11 @@ repeat -8, 6, -4, 8, 8, -4 do
   # reset the flag
   execute red do
     setblock 50, 34, 12, 'minecraft:standing_banner', 4
-    blockdata 50, 34, 12, {'Base'=>4}
+    blockdata 50, 34, 12, {Base: 4}
   end
   execute blue do
     setblock 0, 34, 12, 'minecraft:standing_banner', 12
-    blockdata 0, 34, 12, {'Base'=>1}
+    blockdata 0, 34, 12, {Base: 1}
   end
   replaceitem :entity, @a[score_ReturningFlag_min:1], 'slot.armor.head', 'minecraft:air'
 
@@ -242,11 +242,11 @@ repeat 10, 6, -4, 24, 8, -4 do
   end
   execute red do
     setblock '~ ~ ~', 'minecraft:standing_banner', 4
-    blockdata '~ ~ ~', {'Base'=>4}
+    blockdata '~ ~ ~', {Base: 4}
   end
   execute blue do
     setblock '~ ~ ~', 'minecraft:standing_banner', 12
-    blockdata '~ ~ ~', {'Base'=>1}
+    blockdata '~ ~ ~', {Base: 1}
   end
 
   scoreboard :players, :reset, @a[score_IsDead_min:1], 'HasFlag'
@@ -298,14 +298,14 @@ repeat 10, 6, -2, 24, 8, -2 do
   end
   execute @a[team:'Blue',score_ReturningOwnFlag_min:1] do
     setblock 50, 34, 12, 'minecraft:standing_banner', 4
-    blockdata 50, 34, 12, {'Base'=>4}
+    blockdata 50, 34, 12, {Base: 4}
     tellraw @a, {selector: "@p"},
       {text: " returned the ", color: "reset"},
       {text: "Blue Flag", color: "blue"}
   end
   execute @a[team:'Red',score_ReturningOwnFlag_min:1] do
     setblock 0, 34, 12, 'minecraft:standing_banner', 12
-    blockdata 0, 34, 12, {'Base'=>1}
+    blockdata 0, 34, 12, {Base: 1}
     tellraw @a, {selector: "@p"},
       {text: " returned the ", color: "reset"},
       {text: "Red Flag", color: "red"}

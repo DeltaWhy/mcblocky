@@ -88,10 +88,10 @@ module McBlocky
 
       if old_block and old_block.block_kind == block.block_kind and old_block.block_data == block.block_data
         return if old_block.nbt == block.nbt
-        blockdata block.x, block.y, block.z, block.nbt
+        blockdata block.x, block.y, block.z, block.nbt unless block.nbt == {}
       else
         setblock block.x, block.y, block.z, block.block_kind, block.block_data, 'replace'
-        blockdata block.x, block.y, block.z, block.nbt
+        blockdata block.x, block.y, block.z, block.nbt unless block.nbt == {}
       end
     end
 
