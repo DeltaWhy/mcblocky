@@ -145,8 +145,12 @@ end
 
 # pick up enemy flag
 repeat 10, 6, -6, 24, 8, -6 do
-  execute @a[team:'Red'], '~ ~ ~', :detect, '~ ~ ~', 'minecraft:standing_banner', 4, 'scoreboard players set @p CapturingFlag 1'
-  execute @a[team:'Blue'], '~ ~ ~', :detect, '~ ~ ~', 'minecraft:standing_banner', 12, 'scoreboard players set @p CapturingFlag 1'
+  detect @a[team:'Red'], '~ ~ ~', 'minecraft:standing_banner', 4 do
+    scoreboard :players, :set, @p, 'CapturingFlag', 1
+  end
+  detect @a[team:'Blue'], '~ ~ ~', 'minecraft:standing_banner', 12 do
+    scoreboard :players, :set, @p, 'CapturingFlag', 1
+  end
   red = @p[team:'Red', score_CapturingFlag_min:1]
   blue = @p[team:'Blue', score_CapturingFlag_min:1]
 
@@ -172,10 +176,10 @@ end
 
 # capture enemy flag
 repeat -8, 6, -4, 8, 8, -4 do
-  execute @p[team:'Red', score_HasFlag_min:1, loc: red_spawn, r: 1], '~ ~ ~', :detect, '~ ~ ~', 'minecraft:standing_banner', 12 do
+  detect @p[team:'Red', score_HasFlag_min:1, loc: red_spawn, r: 1], '~ ~ ~', 'minecraft:standing_banner', 12 do
     scoreboard :players, :set, @p, 'ReturningFlag', 1
   end
-  execute @p[team:'Blue', score_HasFlag_min:1, loc: blue_spawn, r: 1], '~ ~ ~', :detect, '~ ~ ~', 'minecraft:standing_banner', 4 do
+  detect @p[team:'Blue', score_HasFlag_min:1, loc: blue_spawn, r: 1], '~ ~ ~', 'minecraft:standing_banner', 4 do
     scoreboard :players, :set, @p, 'ReturningFlag', 1
   end
   red = @p[team:'Red', score_ReturningFlag_min:1]
@@ -252,10 +256,16 @@ end
 
 # pick up own flag
 repeat -8, 6, -2, 8, 8, -2 do
-  execute @a[team:'Blue'], '~ ~ ~', :detect, '~ ~ ~', 'minecraft:standing_banner', 4, 'scoreboard players set @p CapturingOwnFlag 1'
-  execute @a[team:'Red'], '~ ~ ~', :detect, '~ ~ ~', 'minecraft:standing_banner', 12, 'scoreboard players set @p CapturingOwnFlag 1'
+  detect @a[team:'Blue'], '~ ~ ~', 'minecraft:standing_banner', 4 do
+    scoreboard :players, :set, @p, 'CapturingOwnFlag', 1
+  end
+  detect @a[team:'Red'], '~ ~ ~', 'minecraft:standing_banner', 12 do
+    scoreboard :players, :set, @p, 'CapturingOwnFlag', 1
+  end
   # can't pick up own flag when it's at base
-  execute @a[score_CapturingOwnFlag_min:1], '~ ~ ~', :detect, '~ ~-1 ~', 'minecraft:gold_block', 0, 'scoreboard players reset @p CapturingOwnFlag'
+  detect @a[score_CapturingOwnFlag_min:1], '~ ~-1 ~', 'minecraft:gold_block', 0 do
+    scoreboard :players, :reset, @p, 'CapturingOwnFlag'
+  end
   blue = @p[team:'Blue', score_CapturingOwnFlag_min:1]
   red = @p[team:'Red', score_CapturingOwnFlag_min:1]
 

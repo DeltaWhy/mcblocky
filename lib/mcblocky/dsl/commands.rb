@@ -28,6 +28,18 @@ module McBlocky::DSL
       command :blockdata, *args
     end
 
+    def detect(selector, *args, &block)
+      if block
+        chain = Commands.new(:detect)
+        chain.instance_exec &block
+        chain.commands.each do |c|
+          command :execute, selector, '~ ~ ~', :detect, *args, c
+        end
+      else
+        command :execute, selector, '~ ~ ~', :detect, *args
+      end
+    end
+
     def execute(selector, *args, &block)
       if args.empty?
         args = ['~ ~ ~']
