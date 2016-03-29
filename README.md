@@ -9,7 +9,7 @@ maps.
 
 ## Usage
 
-TODO: Write usage instructions here
+See [the documentation](doc/Introduction.md).
 
 ## Development
 

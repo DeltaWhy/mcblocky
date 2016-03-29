@@ -1,5 +1,20 @@
+
 # McBlocky
 McBlocky is a Ruby DSL for creating Minecraft command block contraptions and maps. It allows you to write Ruby code that gets translated into commands and command blocks in the Minecraft world. Because it does everything by executing commands in the server console, you can see the results of your changes in-game almost immediately after you hit 'Save' in your editor -- no need to restart the server to run MCEdit.
+
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**
+
+- [McBlocky](#mcblocky)
+  - [Getting Started](#getting-started)
+  - [Basic commands](#basic-commands)
+  - [Leveraging Ruby](#leveraging-ruby)
+  - [Placing blocks](#placing-blocks)
+  - [Command chains](#command-chains)
+  - [Next steps](#next-steps)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## Getting Started
 To start your project, you first need to create a `config.yml` that tells McBlocky how to run the server. See an example [here](../examples/ctf/config.example.yml). Next, create your main Ruby file. By default McBlocky will look for a `.rb` file with the same name as the folder containing your `config.yml`, but you can specify another name if you prefer.
