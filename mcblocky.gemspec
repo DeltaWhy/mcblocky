@@ -6,6 +6,7 @@ require 'mcblocky/version'
 Gem::Specification.new do |spec|
   spec.name          = "mcblocky"
   spec.version       = McBlocky::VERSION
+  spec.version       = "#{spec.version}-alpha-#{ENV['TRAVIS_BUILD_NUMBER']}" if ENV['TRAVIS']
   spec.authors       = ["Michael Limiero"]
   spec.email         = ["mike5713@gmail.com"]
 

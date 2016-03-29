@@ -1,10 +1,17 @@
 language: ruby
 rvm:
-  - "2.3.0"
-  - "2.2.4"
-  - "2.1.8"
-  - "2.0.0"
-  - "1.9.3"
+- 2.3.0
+- 2.2.4
+- 2.1.8
+- 2.0.0
 before_install:
-  - gem install bundler
-  - bundle --version
+- gem install bundler
+- bundle --version
+deploy:
+  provider: rubygems
+  api_key:
+    secure: AHSNQhV3U2MFHKtSbWkqqrJoIJaU47iF7wFlnYOhi2I2NnGT6ShiseVvxtXf8008sQO+0+Bxsbudnbipaw14suTUYLXAbA2iZyDXiPg4iQ5ABGx6nf+AyD77mhHC3ZmSEFl0EmCqywz0tpChWPrDF8kaDRjmtzsqDMAqkGjYl/8J4iSzLX1vtXAUYWYPufahHnInEfOdEmWJUt9VVD/Q1CmojdqZh/VIl6W0ysRL0nrm00mepuKgc9XO0JxIK86bIsb7MbjMMYvPTuRLsU4lv6ItT4c9ML7tHGMVKG/dW5JwK6RlREdQDRsAWMFTStdH2aCAH3Q4rLbXLlzDHiTqOesmp0jEo/jUf1cKDEcVJUkRN1urQZWSNRaipcapYLx63CGV9cn2ZXRiGuPx/kZiKI/g8VbjdtZoEqtsg70amgTNNtFEpvG+2cm6kOiDgRnW2UfDoszCVzNnQs1VHfIwveMQuat34PutpBCPnwiHH0Cv/SC+tx42Az9NDYkvrCnJytRgTSsGC2TcHZhT0XbGTuEtVf9hvhmXLD2TrC4mH88L0Fo2EDU9U+CWRJnlKdhEySHOJD3kFyh2K7kiCEm1JA4uqPZDnehn0NknLKv8fcxz4/jmMMHSlYiO0xSE2rv4Hzr8iW99nnRV/eAMnFfXa/7IE6oWzGkdaTPNT883jRw=
+  gem: mcblocky
+  on:
+    tags: true
+    repo: DeltaWhy/mcblocky
