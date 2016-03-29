@@ -5,6 +5,7 @@ module McBlocky
   class Cli < Thor
     include Logging
 
+    map "--version" => :version
     class_option :config,
       desc: 'Path to config file',
       default: 'config.yml',
@@ -103,6 +104,11 @@ module McBlocky
       end
       log_error "Error trace:"
       raise
+    end
+
+    desc "version", "show the current version number"
+    def version
+      puts "mcblocky #{McBlocky::VERSION}"
     end
   end
 end

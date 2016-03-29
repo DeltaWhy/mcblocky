@@ -13,6 +13,7 @@ Gem::Specification.new do |spec|
   spec.summary       = %q{Minecraft command blocks as Ruby code}
   spec.description   = %q{McBlocky is a Ruby DSL for creating Minecraft command block contraptions and maps.}
   spec.homepage      = "https://github.com/DeltaWhy/mcblocky"
+  spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
   spec.bindir        = "exe"
@@ -25,4 +26,6 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency "thor", "~> 0.19"
   spec.add_runtime_dependency "listen", "~> 3.0"
+
+  spec.required_ruby_version = ">= 2.0.0"
 end
