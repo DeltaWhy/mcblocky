@@ -12,7 +12,7 @@ If you've gotten your configuration right, you should see this message:
 ```
 ---> Server is ready! Connect to 127.0.0.1:25565
 ```
-Start up Minecraft and connect to the server so you can see your changes in real time.
+Start up Minecraft and connect to the server so you can see your changes in real time. You can stop the server by pressing `CTRL-C` or running the `stop` command in the console (other server commands work too).
 
 ## Basic commands
 Add this to `hello.rb`:
@@ -121,3 +121,10 @@ repeat -5, 5, -5, 5, 10, 5 do
   scoreboard :players, :reset, @a, 'SwitchingTeam'
 end
 ```
+
+## Next steps
+Check out the [examples folder](../examples) for some longer examples. Then try making one of your own! Also have a look at the rest of the [documentation](../doc) *(coming soon)*.
+
+Please report bugs and feature requests on the [issue tracker](https://github.com/DeltaWhy/mcblocky/issues). I will also accept pull requests for the code, documentation, and examples.
+
+If you build a map with this, I'd love to hear about it! Drop me a line on Twitter [@michaellimiero](https://twitter.com/michaellimiero) and I'll add a link to your project in the README.
