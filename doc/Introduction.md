@@ -4,15 +4,14 @@ McBlocky is a Ruby DSL for creating Minecraft command block contraptions and map
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**
 
-- [McBlocky](#mcblocky)
-  - [Getting Started](#getting-started)
-  - [Basic commands](#basic-commands)
-  - [Leveraging Ruby](#leveraging-ruby)
-  - [Placing blocks](#placing-blocks)
-  - [Command chains](#command-chains)
-  - [Next steps](#next-steps)
+
+- [Getting Started](#getting-started)
+- [Basic commands](#basic-commands)
+- [Leveraging Ruby](#leveraging-ruby)
+- [Placing blocks](#placing-blocks)
+- [Command chains](#command-chains)
+- [Next steps](#next-steps)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
