@@ -36,6 +36,10 @@ module McBlocky
       @chains ||= []
     end
 
+    def named_chains
+      @named_chains ||= {}
+    end
+
     def blocks
       @blocks ||= {}
     end

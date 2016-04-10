@@ -1,9 +1,11 @@
 module McBlocky::DSL
   class Commands
+    attr_accessor :context
     attr_reader :kind
     attr_accessor :commands
 
-    def initialize(kind, *args)
+    def initialize(context, kind, *args)
+      @context = context
       @kind = kind
       @args = args
       @commands = []
@@ -21,6 +23,27 @@ module McBlocky::DSL
       McBlocky::DSL.to_nbt(obj)
     end
 
+    def activate(name)
+      raise NameError, "No chain named #{name}" unless context.named_chains.has_key? name
+      raise ArgumentError, "#{name} is not an activateable chain" unless context.named_chains[name].kind == :impulse_chain
+      chain = context.named_chains[name]
+      command :blockdata, chain.rect.x1, chain.rect.y1, chain.rect.z1, '{auto:1}'
+    end
+
+    def enable(name)
+      raise NameError, "No chain named #{name}" unless context.named_chains.has_key? name
+      raise ArgumentError, "#{name} is not a repeat chain" unless context.named_chains[name].kind == :repeat
+      chain = context.named_chains[name]
+      command :blockdata, chain.rect.x1, chain.rect.y1, chain.rect.z1, '{auto:1}'
+    end
+
+    def disable(name)
+      raise NameError, "No chain named #{name}" unless context.named_chains.has_key? name
+      raise ArgumentError, "#{name} is not a repeat chain" unless context.named_chains[name].kind == :repeat
+      chain = context.named_chains[name]
+      command :blockdata, chain.rect.x1, chain.rect.y1, chain.rect.z1, '{auto:0}'
+    end
+
     COMMANDS = [:achievement, :ban, :ban_ip, :banlist, :blockdata, :clear, :clone, :debug, :defaultgamemode, :deop, :difficulty, :effect, :enchant, :entitydata, :execute, :fill, :gamemode, :gamerule, :give, :help, :kick, :kill, :list, :me, :op, :pardon, :pardon_ip, :particle, :playsound, :replaceitem, :save_all, :save_off, :save_on, :say, :scoreboard, :seed, :setblock, :setidletimeout, :setworldspawn, :spawnpoint, :spreadplayers, :stats, :stop, :summon, :tell, :tellraw, :testfor, :testforblock, :testforblocks, :time, :title, :toggledownfall, :tp, :trigger, :weather, :whitelist, :worldborder, :xp]
 
     def blockdata(*args)
@@ -30,7 +53,7 @@ module McBlocky::DSL
 
     def detect(selector, *args, &block)
       if block
-        chain = Commands.new(:detect)
+        chain = Commands.new(context, :detect)
         chain.instance_exec &block
         chain.commands.each do |c|
           command :execute, selector, '~ ~ ~', :detect, *args, c
@@ -45,7 +68,7 @@ module McBlocky::DSL
         args = ['~ ~ ~']
       end
       if block
-        chain = Commands.new(:execute)
+        chain = Commands.new(context, :execute)
         chain.instance_exec &block
         chain.commands.each do |c|
           command :execute, selector, *args, c

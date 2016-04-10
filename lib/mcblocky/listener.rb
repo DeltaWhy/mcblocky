@@ -18,6 +18,7 @@ module McBlocky
         File.expand_path('../dsl.rb', __FILE__),
         File.expand_path('../dsl/commands.rb', __FILE__),
         File.expand_path('../dsl/repeat_chain.rb', __FILE__),
+        File.expand_path('../dsl/impulse_chain.rb', __FILE__),
         File.expand_path('../dsl/selector.rb', __FILE__),
         File.expand_path('../dsl/command_block.rb', __FILE__),
         File.expand_path('../dsl/block.rb', __FILE__),

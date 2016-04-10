@@ -1,8 +1,8 @@
 module McBlocky::DSL
-  class RepeatChain < Commands
+  class ImpulseChain < Commands
     attr_reader :rect
     def initialize(context, *args)
-      super(context, :repeat)
+      super(context, :impulse_chain)
       @rect = McBlocky::Rect.new(*args)
     end
   end

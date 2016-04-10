@@ -1,6 +1,7 @@
 load File.expand_path('dsl/selector.rb', File.dirname(__FILE__))
 load File.expand_path('dsl/commands.rb', File.dirname(__FILE__))
 load File.expand_path('dsl/repeat_chain.rb', File.dirname(__FILE__))
+load File.expand_path('dsl/impulse_chain.rb', File.dirname(__FILE__))
 load File.expand_path('dsl/command_block.rb', File.dirname(__FILE__))
 load File.expand_path('dsl/block.rb', File.dirname(__FILE__))
 load File.expand_path('dsl/container.rb', File.dirname(__FILE__))
@@ -13,27 +14,43 @@ module McBlocky
     end
 
     def initial(&block)
-      chain = Commands.new(:initial)
+      chain = Commands.new(context, :initial)
       chain.instance_exec(&block)
       chains << chain
     end
 
     def cleanup(&block)
-      chain = Commands.new(:cleanup)
+      chain = Commands.new(context, :cleanup)
       chain.instance_exec(&block)
       chains << chain
     end
 
     def after(&block)
-      chain = Commands.new(:after)
+      chain = Commands.new(context, :after)
       chain.instance_exec(&block)
       chains << chain
     end
 
-    def repeat(x1, y1, z1, x2, y2, z2, &block)
-      chain = RepeatChain.new(x1, y1, z1, x2, y2, z2)
+    def repeat(*args, &block)
+      if Symbol === args[0]
+        name = args.delete_at(0)
+        raise NameError, 'Name already exists' if named_chains.has_key? name
+      end
+      chain = RepeatChain.new(context, *args)
       chain.instance_exec(&block)
       chains << chain
+      named_chains[name] = chain if name
+    end
+
+    def chain(*args, &block)
+      if Symbol === args[0]
+        name = args.delete_at(0)
+        raise NameError, 'Name already exists' if named_chains.has_key? name
+      end
+      chain = ImpulseChain.new(context, *args)
+      chain.instance_exec(&block)
+      chains << chain
+      named_chains[name] = chain if name
     end
 
     def at(x, y, z, data=0, kind=:normal, nbt={}, &block)
@@ -51,7 +68,7 @@ module McBlocky
                    else
                      raise ArgumentError, 'Unknown command block type'
                    end
-      cblock = CommandBlock.new(x, y, z, data, block_kind, nbt)
+      cblock = CommandBlock.new(context, x, y, z, data, block_kind, nbt)
       cblock.instance_exec(&block)
       blocks[Location.new(x, y, z)] = cblock
     end

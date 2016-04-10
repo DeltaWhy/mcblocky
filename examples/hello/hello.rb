@@ -31,7 +31,7 @@ initial do
   tellraw @a[team: 'Red'], {text: "Hello world", color: "red"}
 end
 
-repeat 171, 82, 242, 175, 84, 247 do
+repeat :teams, 171, 82, 242, 175, 84, 242 do
   scoreboard :players, :set, @a[x: 172, y: 81, z: 236, r: 1, team: '!Red'], 'SwitchingTeam', 1
   scoreboard :players, :set, @a[x: 170, y: 81, z: 236, r: 1, team: '!Blue'], 'SwitchingTeam', 1
   execute @a[x: 170, y: 81, z: 236, r: 1, score_SwitchingTeam_min: 1], '~ ~ ~', 'scoreboard teams join Blue @p'
@@ -73,6 +73,31 @@ furnace 176, 79, 248 do
   item 'minecraft:spawn_egg', 1, 0, {'EntityTag'=>{'id'=>'Chicken', 'CustomName'=>'Chickfila'}, 'display'=>{'Name'=>'Chicken Egg'}}
   item 'minecraft:gold_ingot'
 end
+
+at 172, 79, 244 do
+  disable :teams
+end
+
+at 174, 79, 244 do
+  enable :teams
+end
+
+setblock 172, 80, 244, 'minecraft:standing_sign', 0, 'replace', {'Text1'=>'{"text":"Disable team"}', 'Text2'=>'{"text":"switcher"}'}
+setblock 174, 80, 244, 'minecraft:standing_sign', 0, 'replace', {'Text1'=>'{"text":"Enable team"}', 'Text2'=>'{"text":"switcher"}'}
+setblock 172, 79, 245, 'minecraft:stone_button', 3
+setblock 174, 79, 245, 'minecraft:stone_button', 3
+
+chain :hello, 171, 82, 243, 175, 84, 243 do
+  say 'Hello'
+  say 'World'
+end
+
+at 176, 79, 244 do
+  activate :hello
+end
+
+setblock 176, 80, 244, 'minecraft:standing_sign', 0, 'replace', {'Text1'=>'{"text":"Activate hello"}'}
+setblock 176, 79, 245, 'minecraft:stone_button', 3
 
 after do
   # setblock 175, 79, 248, 'minecraft:standing_sign', 0, 'replace'

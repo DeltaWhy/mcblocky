@@ -1,8 +1,8 @@
 module McBlocky::DSL
   class CommandBlock < Commands
     attr_reader :x, :y, :z, :block_data, :block_kind
-    def initialize(x, y, z, facing, kind, nbt={})
-      super(:at)
+    def initialize(context, x, y, z, facing, kind, nbt={})
+      super(context, :at)
       @x = x
       @y = y
       @z = z

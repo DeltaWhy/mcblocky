@@ -1,7 +1,7 @@
 module McBlocky
   class Executor < DSL::Commands
     def self.to_commands(context, old_context=nil)
-      executor = Executor.new(:final)
+      executor = Executor.new(nil, :final)
       executor.do_context(context, old_context)
       executor.commands
     end
@@ -63,8 +63,13 @@ module McBlocky
         end
       end
 
-      context.chains.select{|x|x.kind == :repeat}.each do |c|
-        do_repeat context, c
+      context.chains.select{|x|[:repeat, :impulse_chain].include? x.kind}.each do |c|
+        case c.kind
+        when :repeat
+          do_repeat context, c
+        when :impulse_chain
+          do_impulse context, c
+        end
       end
 
       locations = (old_context ? old_context.blocks.keys : []) + context.blocks.keys
@@ -121,9 +126,44 @@ module McBlocky
                  elsif next_cursor.z - cursor.z == -1
                    DSL::Facing::NORTH
                  end
-        context.blocks[cursor] = DSL::CommandBlock.new(cursor.x, cursor.y, cursor.z, facing, kind, {'auto'=>1})
+        context.blocks[cursor] = DSL::CommandBlock.new(context, cursor.x, cursor.y, cursor.z, facing, kind, {'auto'=>1})
         context.blocks[cursor].command c
         kind = 'minecraft:chain_command_block'
+      end
+    end
+
+    def do_impulse(context, chain)
+      sequence = fill_space(chain.rect)
+      chain.commands << "blockdata #{chain.rect.x1} #{chain.rect.y1} #{chain.rect.z1} {auto:0}"
+      if chain.commands.length > sequence.length
+        raise ArgumentError, "Chain is too long for the provided space"
+      end
+      kind = 'minecraft:command_block'
+      nbt = {auto: 0}
+      chain.commands.each_with_index do |c,i|
+        cursor = sequence[i]
+        next_cursor = if i+1 < sequence.length
+                        sequence[i+1]
+                      else
+                        Location.new(cursor.x, cursor.y+1, cursor.z)
+                      end
+        facing = if next_cursor.x - cursor.x == 1
+                   DSL::Facing::EAST
+                 elsif next_cursor.x - cursor.x == -1
+                   DSL::Facing::WEST
+                 elsif next_cursor.y - cursor.y == 1
+                   DSL::Facing::UP
+                 elsif next_cursor.y - cursor.y == -1
+                   DSL::Facing::DOWN
+                 elsif next_cursor.z - cursor.z == 1
+                   DSL::Facing::SOUTH
+                 elsif next_cursor.z - cursor.z == -1
+                   DSL::Facing::NORTH
+                 end
+        context.blocks[cursor] = DSL::CommandBlock.new(context, cursor.x, cursor.y, cursor.z, facing, kind, nbt)
+        context.blocks[cursor].command c
+        kind = 'minecraft:chain_command_block'
+        nbt = {auto: 1}
       end
     end
 
