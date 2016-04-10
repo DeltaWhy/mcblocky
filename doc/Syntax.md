@@ -44,7 +44,7 @@ helper name do |args, user|
   # helper context
 end
 ```
-See [Helpers.md].
+See [Helpers](./Helpers.md).
 
 ### initial
 ```ruby

@@ -72,4 +72,12 @@ class NBTJSONTest < Minitest::Test
         {slot: 1, id: 'minecraft:iron_ingot'}
       ])
   end
+
+  def test_to_json
+    assert_equal '"Hello"', McBlocky::DSL.to_json("Hello")
+    assert_equal '42', McBlocky::DSL.to_json(42)
+    assert_equal '{"foo":"bar"}', McBlocky::DSL.to_json({foo: 'bar'})
+    assert_equal '[42]', McBlocky::DSL.to_json([42])
+    assert_equal '[1,2,"foo"]', McBlocky::DSL.to_json(1, 2, "foo")
+  end
 end

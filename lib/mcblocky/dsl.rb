@@ -115,6 +115,15 @@ module McBlocky
     end
     module_function :to_nbt
 
+    def to_json(*args)
+      if args.length > 1
+        JSON.dump(args)
+      else
+        JSON.dump(args[0])
+      end
+    end
+    module_function :to_json
+
     module Facing
       DOWN = 0
       UP = 1
