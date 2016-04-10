@@ -3,6 +3,7 @@ require 'mcblocky/dsl'
 module McBlocky
   class Context
     attr_accessor :server
+    attr_accessor :last_area
 
     def self.run_file(file, dir=nil)
       dir = File.dirname(file) unless dir
@@ -46,10 +47,6 @@ module McBlocky
 
     def rects
       @rects ||= {}
-    end
-
-    def areas
-      @areas ||= []
     end
 
     def context

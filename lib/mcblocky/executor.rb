@@ -36,20 +36,6 @@ module McBlocky
         end
       end
 
-      if old_context
-        old_context.areas.each do |x1, y1, z1, x2, y2, z2|
-          fill x1, y1, z1, x2, y2, z2, 'minecraft:air'
-        end
-      end
-      context.areas.each do |x1, y1, z1, x2, y2, z2|
-        fill x1, y1, z1, x2, y1, z2, 'minecraft:stained_glass', '7'
-        fill x1, y2, z1, x2, y2, z2, 'minecraft:stained_glass', '7'
-        fill x1, y1, z1, x1, y2, z2, 'minecraft:stained_glass', '7'
-        fill x2, y1, z1, x2, y2, z2, 'minecraft:stained_glass', '7'
-        fill x1, y1, z1, x2, y2, z1, 'minecraft:stained_glass', '7'
-        fill x1, y1, z2, x2, y2, z2, 'minecraft:stained_glass', '7'
-      end
-
       rects = (old_context ? old_context.rects.keys : []) + context.rects.keys
       rects.uniq.each do |rect|
         old_block = old_context ? old_context.rects[rect] : nil
@@ -101,13 +87,17 @@ module McBlocky
     end
 
     def do_repeat(context, chain)
+      if chain.rect != @last_area
+        @last_area = chain.rect
+        @offset = 0
+      end
       sequence = fill_space(chain.rect)
-      if chain.commands.length > sequence.length
+      if chain.commands.length + @offset > sequence.length
         raise ArgumentError, "Chain is too long for the provided space"
       end
       kind = 'minecraft:repeating_command_block'
       chain.commands.each_with_index do |c,i|
-        cursor = sequence[i]
+        cursor = sequence[i+@offset]
         next_cursor = if i+1 < sequence.length
                         sequence[i+1]
                       else
@@ -130,18 +120,23 @@ module McBlocky
         context.blocks[cursor].command c
         kind = 'minecraft:chain_command_block'
       end
+      @offset += self.next_power_of_two(chain.commands.length)
     end
 
     def do_impulse(context, chain)
+      if chain.rect != @last_area
+        @last_area = chain.rect
+        @offset = 0
+      end
       sequence = fill_space(chain.rect)
-      chain.commands << "blockdata #{chain.rect.x1} #{chain.rect.y1} #{chain.rect.z1} {auto:0}"
-      if chain.commands.length > sequence.length
+      chain.commands << "blockdata #{sequence[@offset].x} #{sequence[@offset].y} #{sequence[@offset].z} {auto:0}"
+      if chain.commands.length + @offset > sequence.length
         raise ArgumentError, "Chain is too long for the provided space"
       end
       kind = 'minecraft:command_block'
       nbt = {auto: 0}
       chain.commands.each_with_index do |c,i|
-        cursor = sequence[i]
+        cursor = sequence[i+@offset]
         next_cursor = if i+1 < sequence.length
                         sequence[i+1]
                       else
@@ -165,6 +160,7 @@ module McBlocky
         kind = 'minecraft:chain_command_block'
         nbt = {auto: 1}
       end
+      @offset += self.next_power_of_two(chain.commands.length)
     end
 
     def fill_space(rect)
@@ -184,6 +180,14 @@ module McBlocky
         end
       end
       path
+    end
+
+    protected
+    def next_power_of_two(n)
+      l = Math.log(n, 2)
+      # ceiling
+      l = l.to_i + 1 if l != l.to_i
+      return (2**l).to_i
     end
   end
 end

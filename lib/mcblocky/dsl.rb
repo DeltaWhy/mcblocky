@@ -36,6 +36,10 @@ module McBlocky
         name = args.delete_at(0)
         raise NameError, 'Name already exists' if named_chains.has_key? name
       end
+      if args.empty?
+        rect = context.last_area
+        args = [rect.x1, rect.y1, rect.z1, rect.x2, rect.y2, rect.z2]
+      end
       chain = RepeatChain.new(context, *args)
       chain.instance_exec(&block)
       chains << chain
@@ -46,6 +50,10 @@ module McBlocky
       if Symbol === args[0]
         name = args.delete_at(0)
         raise NameError, 'Name already exists' if named_chains.has_key? name
+      end
+      if args.empty?
+        rect = context.last_area
+        args = [rect.x1, rect.y1, rect.z1, rect.x2, rect.y2, rect.z2]
       end
       chain = ImpulseChain.new(context, *args)
       chain.instance_exec(&block)
@@ -71,6 +79,10 @@ module McBlocky
       cblock = CommandBlock.new(context, x, y, z, data, block_kind, nbt)
       cblock.instance_exec(&block)
       blocks[Location.new(x, y, z)] = cblock
+    end
+
+    def area(x1, y1, z1, x2, y2, z2)
+      context.last_area = Rect.new(x1, y1, z1, x2, y2, z2)
     end
 
     def setblock(x, y, z, kind, data=0, replacemode='replace', nbt={})
