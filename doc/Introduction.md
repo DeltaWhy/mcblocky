@@ -1,4 +1,3 @@
-
 # McBlocky
 McBlocky is a Ruby DSL for creating Minecraft command block contraptions and maps. It allows you to write Ruby code that gets translated into commands and command blocks in the Minecraft world. Because it does everything by executing commands in the server console, you can see the results of your changes in-game almost immediately after you hit 'Save' in your editor -- no need to restart the server to run MCEdit.
 
@@ -137,7 +136,7 @@ end
 ```
 
 ## Next steps
-Check out the [examples folder](../examples) for some longer examples. Then try making one of your own! Also have a look at the rest of the [documentation](../doc) *(coming soon)*.
+Check out the [examples folder](../examples) for some longer examples. Then try making one of your own! Also have a look at the rest of the [documentation](../doc).
 
 Please report bugs and feature requests on the [issue tracker](https://github.com/DeltaWhy/mcblocky/issues). I will also accept pull requests for the code, documentation, and examples.
 
